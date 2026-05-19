@@ -9,7 +9,7 @@ permissions:
   contents: read
 
 jobs:
-  rules-in-sync:
+  tests:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -19,6 +19,27 @@ jobs:
       - name: Set up venv
         run: |
           python3 -m venv .venv
-          .venv/bin/pip install pyyaml
+          .venv/bin/pip install pyyaml pytest
+      - name: Run unit tests
+        run: .venv/bin/pytest tests/ -v
       - name: Check AGENTS.md and CLAUDE.md are in sync with rules YAML
         run: ./scripts/render.sh --check
+
+  pre-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: pre-commit/action@v3.0.1
+
+  links:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check markdown links
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: --offline --no-progress './**/*.md'
+          fail: true
