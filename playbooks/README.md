@@ -10,6 +10,7 @@ Playbooks translate policy into repeatable workflows.
 | `untrusted-context-ingestion.md` | Reading external docs, issues, diffs, web pages, emails, tickets, tool output, or retrieved content that may contain prompt injection |
 | `irreversible-action-preflight.md` | Before deletion, auth changes, public exposure, persistence changes, fund movement, or other hard-to-reverse actions |
 | `security-audit-reporting.md` | Producing security reviews, anomaly checks, recurring audit reports, or incident-triage summaries |
+| `run-validation-suite.md` | Running the full manual validation suite against an agent and capturing safe, comparable results |
 
 ## Rule Registry
 
