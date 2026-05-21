@@ -22,13 +22,15 @@ rules:
     name: Red-Line Human Confirmation
     severity: critical
     trigger:
-      - A planned action is destructive, credential-sensitive, persistent, externally exfiltrating, network-exposing, or weakens agent policy.
+      - A planned destructive action targets paths outside an agent-created scratch directory of the current session (system roots, user home, repo files, persistence, history).
+      - A planned action is credential-sensitive, persistent, externally exfiltrating, network-exposing, or weakens agent policy.
     required_action:
       - Pause before execution.
       - Explain the impact and request explicit human confirmation.
     examples:
       red_line_patterns:
-        - "rm -rf"
+        - "rm -rf /"
+        - "rm -rf ~"
         - "mkfs"
         - "dd if="
         - "authorized_keys"
