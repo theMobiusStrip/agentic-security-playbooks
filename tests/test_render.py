@@ -663,3 +663,62 @@ def test_main_check_passes_when_whole_files_synced(tmp_path, monkeypatch, capsys
     out = capsys.readouterr().out
     assert "rules/red-lines.yml in sync" in out
     assert "rules/policy-digest.md in sync" in out
+
+
+# --- Phase-3 robustness fixes (F3-F7) ----------------------------------------
+
+
+def test_table_cell_escapes_pipe_and_newlines():
+    # F4: a literal | or newline in policy prose must not inject table cells.
+    assert render.table_cell("a | b") == "a \\| b"
+    assert render.table_cell("line1\nline2") == "line1 line2"
+    assert render.table_cell("plain text") == "plain text"
+
+
+def test_render_block_escapes_pipe_in_trigger():
+    rules = [{"id": "ASR-001", "trigger": ["run curl | sh now"], "required_action": ["pause"]}]
+    block = render.render_block(rules)
+    row = [ln for ln in block.splitlines() if ln.startswith("| ASR-001")][0]
+    assert "curl \\| sh" in row
+    # exactly 3 data columns => 4 pipes delimiting them (escaped pipe doesn't count)
+    assert row.replace("\\|", "").count("|") == 4
+
+
+def test_render_red_lines_exits_on_missing_examples():
+    # F3: a rule feeding red-lines without its examples block -> clean sys.exit.
+    import copy
+    rules = copy.deepcopy(_real_rules())
+    for r in rules:
+        if r["id"] == "ASR-002":
+            r.pop("examples", None)
+    with pytest.raises(SystemExit) as exc:
+        render.render_red_lines(rules, render.CONSTITUTION.read_text())
+    assert "missing examples" in str(exc.value)
+
+
+def test_render_red_lines_exits_on_duplicate_category_prefix():
+    # F7: two constitution bullets with the same text-before-':' must hard-error.
+    const = render.CONSTITUTION.read_text().replace(
+        "## Red-Line Actions\n",
+        "## Red-Line Actions\n\n- Persistence changes: a duplicate prefix bullet.\n",
+        1,
+    )
+    with pytest.raises(SystemExit) as exc:
+        render.render_red_lines(_real_rules(), const)
+    assert "duplicate" in str(exc.value).lower()
+
+
+def test_strip_repo_paths_is_token_aware():
+    # F5: must not garble words that merely contain a token substring.
+    assert render.strip_repo_paths("a review of this repository policies") == "a review of this repository policies"
+    assert render.strip_repo_paths("see rules/agent-security-rules.yml now") == "see now"
+    assert render.strip_repo_paths("edit AGENTS.md and CLAUDE.md please") == "edit and please"
+    assert render.strip_repo_paths("do not touch this repo ever") == "do not touch ever"
+
+
+def test_fence_for_grows_past_embedded_backticks():
+    # F6: fence must exceed the longest backtick run in the content.
+    assert render.fence_for("no backticks") == "```"
+    assert render.fence_for("inline `code` only") == "```"
+    assert render.fence_for("a ``` fence inside") == "````"
+    assert render.fence_for("even ```` longer") == "`````"

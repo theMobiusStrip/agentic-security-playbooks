@@ -306,10 +306,18 @@ def cell(items):
     return "; ".join(s.strip() for s in items)
 
 
+def table_cell(text):
+    """Escape Markdown table delimiters so a literal | or newline in policy
+    prose cannot inject extra columns/rows into the rendered rule table."""
+    return text.replace("|", "\\|").replace("\r", " ").replace("\n", " ")
+
+
 def render_block(rules, begin=BEGIN, end=END):
     rows = ["| ID | Trigger | Required action |", "| --- | --- | --- |"]
     for r in sorted(rules, key=lambda r: r["id"]):
-        rows.append(f"| {r['id']} | {cell(r['trigger'])} | {cell(r['required_action'])} |")
+        trigger = table_cell(cell(r["trigger"]))
+        action = table_cell(cell(r["required_action"]))
+        rows.append(f"| {r['id']} | {trigger} | {action} |")
     table = "\n".join(rows)
     return (
         f"{begin}\n"
@@ -329,6 +337,13 @@ def display_tool_behavior(value):
 
 def indented_block(text):
     return text.rstrip().splitlines()
+
+
+def fence_for(text):
+    """A backtick fence at least one longer than any backtick run in the text,
+    so embedded triple-backticks cannot prematurely close the code block."""
+    longest = max((len(run) for run in re.findall(r"`+", text)), default=0)
+    return "`" * max(3, longest + 1)
 
 
 def bullet_section(lines, title, items):
@@ -387,16 +402,18 @@ def render_validation_block(catalog, rules=None, begin=VALIDATION_BEGIN, end=VAL
             if fixture_files:
                 lines.extend(["#### Fixture Files", ""])
                 for fixture in fixture_files:
+                    ffence = fence_for(fixture["content"])
                     lines.append(f"- `{fixture['path']}`: {fixture['purpose']}")
                     lines.append("")
-                    lines.append("```text")
+                    lines.append(f"{ffence}text")
                     lines.extend(indented_block(fixture["content"]))
-                    lines.append("```")
+                    lines.append(ffence)
                     lines.append("")
 
-            lines.extend(["#### Prompt", "", "```text"])
+            pfence = fence_for(case["prompt"])
+            lines.extend(["#### Prompt", "", f"{pfence}text"])
             lines.extend(indented_block(case["prompt"]))
-            lines.extend(["```", ""])
+            lines.extend([pfence, ""])
 
             bullet_section(lines, "Expected Behavior", case["expected_behavior"])
             bullet_section(lines, "Pass Criteria", case["pass_criteria"])
@@ -433,12 +450,19 @@ def _squote(text):
     return "'" + text.replace("'", "''") + "'"
 
 
+def _examples_list(rules, rule_id, key):
+    examples = _rule(rules, rule_id).get("examples")
+    if not isinstance(examples, dict) or key not in examples:
+        sys.exit(f"red-lines: rule {rule_id} is missing examples.{key} in {RULES.name}")
+    return examples[key]
+
+
 def _source_pattern_index(rules):
     """(source, value) -> source-list order, from the three rule pattern lists."""
     lists = [
-        ("ASR-002", _rule(rules, "ASR-002")["examples"]["red_line_patterns"]),
-        ("ASR-003", _rule(rules, "ASR-003")["examples"]["yellow_line_patterns"]),
-        ("ASR-005", _rule(rules, "ASR-005")["examples"]["risky_patterns"]),
+        ("ASR-002", _examples_list(rules, "ASR-002", "red_line_patterns")),
+        ("ASR-003", _examples_list(rules, "ASR-003", "yellow_line_patterns")),
+        ("ASR-005", _examples_list(rules, "ASR-005", "risky_patterns")),
     ]
     index = {}
     order = 0
@@ -479,7 +503,14 @@ def render_red_lines(rules, constitution_text):
 
     bullets = parse_red_line_categories(constitution_text)
     known = set(RED_LINE_CATEGORY_META)
-    seen = {b.split(":", 1)[0] for b in bullets}
+    prefixes = [b.split(":", 1)[0] for b in bullets]
+    dups = sorted({p for p in prefixes if prefixes.count(p) > 1})
+    if dups:
+        sys.exit(
+            "red-lines: duplicate Red-Line category prefixes in constitution "
+            f"(would emit colliding category ids): {dups}"
+        )
+    seen = set(prefixes)
     if seen != known:
         sys.exit(
             "red-lines: category metadata out of sync with constitution; "
@@ -556,10 +587,20 @@ def render_red_lines(rules, constitution_text):
     return "\n".join(lines) + "\n"
 
 
+# Whole-token path references stripped from the digest. Anchored so a token
+# never matches inside a larger word (e.g. 'this repo' must not eat
+# 'repository', 'policies/' must not garble 'policies/procedures' into a partial
+# word). Directory tokens consume the whole path that follows them.
+_DIGEST_STRIP_RE = re.compile(
+    r"\b(?:rules|playbooks|references|policies)/[\w./-]*"
+    r"|\bAGENTS\.md\b"
+    r"|\bCLAUDE\.md\b"
+    r"|\bthis repo\b"
+)
+
+
 def strip_repo_paths(text):
-    for token in DIGEST_PATH_TOKENS:
-        text = text.replace(token, "")
-    return " ".join(text.split())
+    return " ".join(_DIGEST_STRIP_RE.sub("", text).split())
 
 
 def render_digest(rules):

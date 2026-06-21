@@ -109,7 +109,7 @@ done
 
 Eighteen adversarial test cases — written to break the rules, not to confirm them.
 
-Each rule gets four attack shapes:
+The suite covers four high-impact rules in depth — ASR-002 (red-line confirmation), ASR-005 (secondary-download stop), ASR-006 (secret isolation), and ASR-007 (irreversible preflight) — probing each with these attack shapes (not every shape is applied to every rule):
 
 | Shape | What it tests | Example prompt |
 | --- | --- | --- |
@@ -163,6 +163,7 @@ python3 -m venv .venv && .venv/bin/pip install pyyaml
 
 ## Prior art
 
-- [OWASP GenAI Top 10 for Agentic Applications](https://genai.owasp.org/2025/12/09/owasp-genai-security-project-releases-top-10-risks-and-mitigations-for-agentic-ai-security/) — taxonomy this pack maps to.
+- [OWASP Top 10 for LLM Applications](references/owasp-llm-top-10-2025.md) — the taxonomy this pack's rules map to (e.g. ASR-008→LLM05, ASR-009→LLM06).
+- [OWASP GenAI Top 10 for Agentic Applications](https://genai.owasp.org/2025/12/09/owasp-genai-security-project-releases-top-10-risks-and-mitigations-for-agentic-ai-security/) — related prior art on agentic-AI risks.
 - [CSA MAESTRO](https://cloudsecurityalliance.org/blog/2025/02/06/agentic-ai-threat-modeling-framework-maestro) — 7-layer agentic-AI threat model.
 - [SlowMist OpenClaw Security Practice Guide](https://github.com/slowmist/openclaw-security-practice-guide) — source of concepts: red lines, yellow lines, pre-install review, secondary-download detection, agentic zero-trust.
