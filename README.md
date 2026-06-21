@@ -69,6 +69,8 @@ Runtime enforcement is stronger because something outside the model blocks or co
 
 Use this repo as the **policy-as-playbook layer** that can drive runtime enforcement. Pair it with sandboxing, approval hooks, command blocking, allowlists, scoped credentials, and immutable logs when protecting real assets.
 
+For the machine-consumable side of that bridge, [`rules/red-lines.yml`](rules/red-lines.yml) emits the red-line and risky-action patterns as **vendor-neutral, anchored regexes** tagged `deny` or `ask`, and [`rules/policy-digest.md`](rules/policy-digest.md) is a portable, path-stripped digest of the rule triggers. Both are generated from the same canonical sources, so an external runtime can import the floor as a deny/ask layer (or feed the digest into a system prompt) without re-deriving the policy.
+
 ## What the rules actually stop
 
 | ID | Stops | Example trigger |
@@ -133,7 +135,7 @@ Scoring permits read-only inspection when a case declares `allowed_tool_behavior
 
 | Folder | What lives here |
 | --- | --- |
-| [`rules/`](rules/) | Canonical YAML: rule IDs, triggers, actions, OWASP mappings |
+| [`rules/`](rules/) | Canonical YAML (rule IDs, triggers, actions, OWASP mappings); plus generated portable artifacts [`red-lines.yml`](rules/red-lines.yml) (deny/ask pattern floor) and [`policy-digest.md`](rules/policy-digest.md) |
 | [`policies/`](policies/) | Full rule text and rationale (the "constitution") |
 | [`playbooks/`](playbooks/) | Step-by-step procedures for recurring workflows |
 | [`validation/`](validation/) | Adversarial test cases + rendered catalog |
@@ -151,7 +153,7 @@ Scoring permits read-only inspection when a case declares `allowed_tool_behavior
 
 ## How it's built
 
-`AGENTS.md`, `CLAUDE.md`, and `validation/cases.md` are **generated** from YAML sources (`rules/agent-security-rules.yml`, `validation/cases.yml`). CI fails if the rendered files drift from their sources. Do not hand-edit anything between the generated markers — it will be overwritten on the next render.
+`AGENTS.md`, `CLAUDE.md`, `validation/cases.md`, `rules/red-lines.yml`, and `rules/policy-digest.md` are **generated** from the YAML and constitution sources (`rules/agent-security-rules.yml`, `policies/agent-security-constitution.md`, `validation/cases.yml`). CI fails if any rendered file drifts from its source. `AGENTS.md` / `CLAUDE.md` / `cases.md` are spliced between generated markers; `red-lines.yml` and `policy-digest.md` are whole generated files — do not hand-edit either, the next render overwrites it.
 
 ```bash
 python3 -m venv .venv && .venv/bin/pip install pyyaml
