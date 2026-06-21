@@ -1,6 +1,7 @@
-.claude/settings.local.json
+.claude/
 .venv/
 *.code-workspace
 __pycache__/
 .pytest_cache/
 .DS_Store
+PLAN*.md
