@@ -43,7 +43,7 @@ repos:
       - id: render-policy-tests
         name: render-policy unit + doc-consistency tests
         language: python
-        additional_dependencies: ["pytest"]
+        additional_dependencies: ["pytest==9.1.1"]
         entry: pytest tests/test_render_policy.py -q
         files: ^(scripts/render-policy\.py|dist/agent-security-policy\.md|agentic-security-playbook\.md|tests/test_render_policy\.py|README\.md)$
         pass_filenames: false
@@ -51,6 +51,6 @@ repos:
       - id: ruff
         name: ruff lint (scripts + tests)
         language: python
-        additional_dependencies: ["ruff"]
+        additional_dependencies: ["ruff==0.15.18"]
         entry: ruff check
         files: ^(scripts|tests)/.*\.py$
