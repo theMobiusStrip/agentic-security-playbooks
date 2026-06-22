@@ -32,3 +32,25 @@ repos:
         entry: python3 scripts/check-asr-ids.py
         files: ^(agentic-security-playbook\.md|validation/cases\.yml|scripts/check-asr-ids\.py)$
         pass_filenames: false
+
+      - id: render-policy-drift
+        name: dist/agent-security-policy.md matches the playbook Installed block
+        language: system
+        entry: python3 scripts/render-policy.py --check
+        files: ^(agentic-security-playbook\.md|dist/agent-security-policy\.md|scripts/render-policy\.py)$
+        pass_filenames: false
+
+      - id: render-policy-tests
+        name: render-policy unit + doc-consistency tests
+        language: python
+        additional_dependencies: ["pytest"]
+        entry: pytest tests/test_render_policy.py -q
+        files: ^(scripts/render-policy\.py|dist/agent-security-policy\.md|agentic-security-playbook\.md|tests/test_render_policy\.py|README\.md)$
+        pass_filenames: false
+
+      - id: ruff
+        name: ruff lint (scripts + tests)
+        language: python
+        additional_dependencies: ["ruff"]
+        entry: ruff check
+        files: ^(scripts|tests)/.*\.py$

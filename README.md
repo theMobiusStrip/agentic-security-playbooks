@@ -3,7 +3,7 @@
 [![ci](https://github.com/theMobiusStrip/agentic-security-playbooks/actions/workflows/ci.yml/badge.svg)](https://github.com/theMobiusStrip/agentic-security-playbooks/actions/workflows/ci.yml)
 [![license: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 [![rules](https://img.shields.io/badge/rules-11-informational.svg)](agentic-security-playbook.md)
-[![validation cases](https://img.shields.io/badge/validation%20cases-18-informational.svg)](validation/cases.yml)
+[![validation cases](https://img.shields.io/badge/validation%20cases-22-informational.svg)](validation/cases.yml)
 [![maps to OWASP LLM Top 10](https://img.shields.io/badge/maps%20to-OWASP%20LLM%20Top%2010-orange.svg)](references/owasp-llm-top-10-2025.md)
 
 An agent-resident security contract for high-privilege autonomous AI coding agents — Codex, Claude Code, coble, and anything else that turns natural-language requests into shell, filesystem, credential, or network actions. The contract loads on every session — interactive chat, scheduled runs, cron-triggered jobs, autonomous loops — so the same rules apply whether a human typed the request or a webhook did. Eleven rules covering the failure modes that actually bite: prompt injection, `rm -rf /`, `curl | bash` from a README, secrets in transcripts, force-pushes to `main`, postinstall hooks that fetch remote payloads.
@@ -21,6 +21,11 @@ Two install scopes:
 
 - **User-level (default)** — written to your agent runtime's global config file (`~/.codex/AGENTS.md`, `~/.claude/CLAUDE.md`, `~/.coble/AGENTS.md`). Every project you run in inherits the policy.
 - **Project-level** — written to `./AGENTS.md` and `./CLAUDE.md` at the workspace root. Only that project.
+
+> [!NOTE]
+> **coble installs are manual at both scopes.** The agent never writes coble's policy itself — coble installs policy through its own `coble policy install` command. Install the rendered artifact yourself:
+> - User-level (global): `coble policy install ./dist/agent-security-policy.md`
+> - This workspace (project): `coble policy install --project ./dist/agent-security-policy.md`
 
 The block is idempotent: re-feeding the playbook updates it in place; re-running with current content is a no-op; uninstall removes just the block, leaving the rest of your config untouched.
 
@@ -54,9 +59,9 @@ All eleven rules, the full red/yellow line text, and the runtime-implementer reg
 
 ## Does it work?
 
-Eighteen adversarial test cases — written to break the rules, not to confirm them.
+Twenty-two adversarial test cases — written to break the rules, not to confirm them.
 
-The suite covers four high-impact rules in depth — ASR-002 (red-line confirmation), ASR-005 (secondary-download stop), ASR-006 (secret isolation), and ASR-007 (irreversible preflight) — probing each with these attack shapes (not every shape is applied to every rule):
+The suite covers five high-impact areas in depth — ASR-002 (red-line confirmation), ASR-005 (secondary-download stop), ASR-006 (secret isolation), ASR-007 (irreversible preflight), and ASR-001 (install provenance gate + per-runtime install scope, incl. coble) — probing each with these attack shapes (not every shape is applied to every rule):
 
 | Shape | What it tests | Example prompt |
 | --- | --- | --- |
@@ -69,7 +74,7 @@ A pack that always refuses isn't safe — it's broken. *Pass = pause for the fir
 
 ### Results
 
-Measured locally on 2026-05-20 against all 18 cases, using disposable workspaces, synthetic fixtures, no approvals, and no real secrets/remotes/auth files.
+Measured locally on 2026-05-20 against the original 18 behavioral cases (ASR-002/005/006/007), using disposable workspaces, synthetic fixtures, no approvals, and no real secrets/remotes/auth files. The 4 ASR-001 install-provenance/coble cases (added 2026-06-22) are not yet in a published measured run.
 
 | Agent | Model | Pass rate | Unsafe actions | Secret leaks |
 | --- | --- | ---: | ---: | ---: |
@@ -83,8 +88,10 @@ Scoring permits read-only inspection when a case declares `allowed_tool_behavior
 | Path | What's here |
 | --- | --- |
 | [`agentic-security-playbook.md`](agentic-security-playbook.md) | **The playbook.** Self-contained: install instructions for the agent, full 11-rule contract, red/yellow lines, runtime-implementer regex reference. This is the only file you need to install. |
+| [`dist/agent-security-policy.md`](dist/agent-security-policy.md) | **Rendered artifact** — the *Installed block* extracted verbatim from the playbook by `scripts/render-policy.py`, kept byte-synced by a CI drift check. For runtimes that install policy from a file (e.g. `coble policy install ./dist/agent-security-policy.md`). |
 | [`references/`](references/) | Threat model, OWASP LLM Top 10 mapping. |
-| [`validation/`](validation/) | 18 adversarial test cases, the run procedure, and the run-record template. |
+| [`tests/`](tests/) | Unit + doc-consistency tests for the policy renderer (`render-policy.py`); run via the `render-policy-tests` pre-commit hook in CI. |
+| [`validation/`](validation/) | 22 adversarial test cases, the run procedure, and the run-record template. |
 
 ## Prior art
 
