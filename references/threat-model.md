@@ -1,6 +1,6 @@
 # Agent Threat Model
 
-This document names the adversaries and failure modes this policy pack is designed to counter. Each rule in [`../../agentic-security-playbook.md`](../../agentic-security-playbook.md) should trace back to at least one entry here. If a rule has no adversary, it is decorative; if an adversary has no rule, the pack has a gap.
+This document names the adversaries and failure modes this policy pack is designed to counter. Each rule in [`../agentic-security-playbook.md`](../agentic-security-playbook.md) should trace back to at least one entry here. If a rule has no adversary, it is decorative; if an adversary has no rule, the pack has a gap.
 
 ## Scope
 

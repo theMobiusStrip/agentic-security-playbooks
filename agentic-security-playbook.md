@@ -338,6 +338,6 @@ Full text, threat model, OWASP mapping, and red-line regex reference: <https://g
 
 ## See also
 
-- Threat model: [`docs/references/threat-model.md`](docs/references/threat-model.md).
-- OWASP LLM Top 10 mapping: [`docs/references/owasp-llm-top-10-2025.md`](docs/references/owasp-llm-top-10-2025.md).
+- Threat model: [`references/threat-model.md`](references/threat-model.md).
+- OWASP LLM Top 10 mapping: [`references/owasp-llm-top-10-2025.md`](references/owasp-llm-top-10-2025.md).
 - Adversarial validation suite: [`validation/`](validation/) — cases, run procedure, and run-record template.
