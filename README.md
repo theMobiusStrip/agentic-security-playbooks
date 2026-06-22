@@ -4,7 +4,7 @@
 [![license: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 [![rules](https://img.shields.io/badge/rules-11-informational.svg)](agentic-security-playbook.md)
 [![validation cases](https://img.shields.io/badge/validation%20cases-18-informational.svg)](validation/cases.yml)
-[![maps to OWASP LLM Top 10](https://img.shields.io/badge/maps%20to-OWASP%20LLM%20Top%2010-orange.svg)](docs/references/owasp-llm-top-10-2025.md)
+[![maps to OWASP LLM Top 10](https://img.shields.io/badge/maps%20to-OWASP%20LLM%20Top%2010-orange.svg)](references/owasp-llm-top-10-2025.md)
 
 An agent-resident security contract for high-privilege autonomous AI coding agents — Codex, Claude Code, coble, and anything else that turns natural-language requests into shell, filesystem, credential, or network actions. The contract loads on every session — interactive chat, scheduled runs, cron-triggered jobs, autonomous loops — so the same rules apply whether a human typed the request or a webhook did. Eleven rules covering the failure modes that actually bite: prompt injection, `rm -rf /`, `curl | bash` from a README, secrets in transcripts, force-pushes to `main`, postinstall hooks that fetch remote payloads.
 
@@ -83,21 +83,12 @@ Scoring permits read-only inspection when a case declares `allowed_tool_behavior
 | Path | What's here |
 | --- | --- |
 | [`agentic-security-playbook.md`](agentic-security-playbook.md) | **The playbook.** Self-contained: install instructions for the agent, full 11-rule contract, red/yellow lines, runtime-implementer regex reference. This is the only file you need to install. |
-| [`docs/playbooks/`](docs/playbooks/) | Operational procedures: third-party code review, untrusted-context ingestion, irreversible-action preflight, audit reporting. |
-| [`docs/references/`](docs/references/) | Threat model, OWASP LLM Top 10 mapping. |
+| [`references/`](references/) | Threat model, OWASP LLM Top 10 mapping. |
 | [`validation/`](validation/) | 18 adversarial test cases, the run procedure, and the run-record template. |
-
-## Current playbooks
-
-- [`third-party-code-review.md`](docs/playbooks/third-party-code-review.md) — review skills, MCPs, plugins, scripts, dependency instructions, and installers before running them.
-- [`untrusted-context-ingestion.md`](docs/playbooks/untrusted-context-ingestion.md) — handle external docs, issues, diffs, web pages, and tool output without letting them become instructions.
-- [`irreversible-action-preflight.md`](docs/playbooks/irreversible-action-preflight.md) — gate destructive, credential-sensitive, persistent, network-exposing, or financial actions.
-- [`security-audit-reporting.md`](docs/playbooks/security-audit-reporting.md) — produce explicit, evidence-backed audit reports, including clean checks.
-- [`run-validation-suite.md`](validation/run-validation-suite.md) — run manual validation prompts safely and capture comparable results.
 
 ## Prior art
 
-- [OWASP Top 10 for LLM Applications](docs/references/owasp-llm-top-10-2025.md) — the taxonomy this pack's rules map to (e.g. ASR-008 → LLM05, ASR-009 → LLM06).
+- [OWASP Top 10 for LLM Applications](references/owasp-llm-top-10-2025.md) — the taxonomy this pack's rules map to (e.g. ASR-008 → LLM05, ASR-009 → LLM06).
 - [OWASP GenAI Top 10 for Agentic Applications](https://genai.owasp.org/2025/12/09/owasp-genai-security-project-releases-top-10-risks-and-mitigations-for-agentic-ai-security/) — related prior art on agentic-AI risks.
 - [CSA MAESTRO](https://cloudsecurityalliance.org/blog/2025/02/06/agentic-ai-threat-modeling-framework-maestro) — 7-layer agentic-AI threat model.
 - [SlowMist OpenClaw Security Practice Guide](https://github.com/slowmist/openclaw-security-practice-guide) — source of concepts: red lines, yellow lines, pre-install review, secondary-download detection, agentic zero-trust.

@@ -332,13 +332,12 @@ The table below is the runtime contract. When a trigger matches, take the action
 
 OWASP LLM Top 10 mapping: ASR-008 → LLM05 (Improper Output Handling); ASR-009 → LLM06 (Excessive Agency).
 
-Full text, playbooks, threat model, OWASP mapping, and red-line regex reference: <https://github.com/theMobiusStrip/agentic-security-playbooks>
+Full text, threat model, OWASP mapping, and red-line regex reference: <https://github.com/theMobiusStrip/agentic-security-playbooks>
 <!-- END agentic-security-playbooks v1 -->
 ```
 
 ## See also
 
-- Operational procedures: [`docs/playbooks/`](docs/playbooks/) — third-party code review, untrusted-context ingestion, irreversible-action preflight, audit reporting.
-- Threat model: [`docs/references/threat-model.md`](docs/references/threat-model.md).
-- OWASP LLM Top 10 mapping: [`docs/references/owasp-llm-top-10-2025.md`](docs/references/owasp-llm-top-10-2025.md).
+- Threat model: [`references/threat-model.md`](references/threat-model.md).
+- OWASP LLM Top 10 mapping: [`references/owasp-llm-top-10-2025.md`](references/owasp-llm-top-10-2025.md).
 - Adversarial validation suite: [`validation/`](validation/) — cases, run procedure, and run-record template.

@@ -9,7 +9,7 @@ Run manual validation prompts against an agent to check whether it follows the A
 Use this playbook when:
 
 - Testing a new agent, model, harness, plugin, or workflow against this policy pack.
-- Re-checking red-line behavior after changing `agentic-security-playbook.md` or any playbook under `docs/playbooks/`.
+- Re-checking red-line behavior after changing `agentic-security-playbook.md`.
 - Capturing evidence for a validation run that may be compared across agents.
 
 ## Applicable Rules
