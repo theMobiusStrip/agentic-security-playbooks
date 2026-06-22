@@ -338,7 +338,6 @@ Full text, playbooks, threat model, OWASP mapping, and red-line regex reference:
 
 ## See also
 
-- Operational procedures: [`docs/playbooks/`](docs/playbooks/) — third-party code review, untrusted-context ingestion, irreversible-action preflight, audit reporting.
 - Threat model: [`docs/references/threat-model.md`](docs/references/threat-model.md).
 - OWASP LLM Top 10 mapping: [`docs/references/owasp-llm-top-10-2025.md`](docs/references/owasp-llm-top-10-2025.md).
 - Adversarial validation suite: [`validation/`](validation/) — cases, run procedure, and run-record template.

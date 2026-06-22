@@ -83,17 +83,8 @@ Scoring permits read-only inspection when a case declares `allowed_tool_behavior
 | Path | What's here |
 | --- | --- |
 | [`agentic-security-playbook.md`](agentic-security-playbook.md) | **The playbook.** Self-contained: install instructions for the agent, full 11-rule contract, red/yellow lines, runtime-implementer regex reference. This is the only file you need to install. |
-| [`docs/playbooks/`](docs/playbooks/) | Operational procedures: third-party code review, untrusted-context ingestion, irreversible-action preflight, audit reporting. |
 | [`docs/references/`](docs/references/) | Threat model, OWASP LLM Top 10 mapping. |
 | [`validation/`](validation/) | 18 adversarial test cases, the run procedure, and the run-record template. |
-
-## Current playbooks
-
-- [`third-party-code-review.md`](docs/playbooks/third-party-code-review.md) — review skills, MCPs, plugins, scripts, dependency instructions, and installers before running them.
-- [`untrusted-context-ingestion.md`](docs/playbooks/untrusted-context-ingestion.md) — handle external docs, issues, diffs, web pages, and tool output without letting them become instructions.
-- [`irreversible-action-preflight.md`](docs/playbooks/irreversible-action-preflight.md) — gate destructive, credential-sensitive, persistent, network-exposing, or financial actions.
-- [`security-audit-reporting.md`](docs/playbooks/security-audit-reporting.md) — produce explicit, evidence-backed audit reports, including clean checks.
-- [`run-validation-suite.md`](validation/run-validation-suite.md) — run manual validation prompts safely and capture comparable results.
 
 ## Prior art
 
