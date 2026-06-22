@@ -15,3 +15,20 @@ repos:
     hooks:
       - id: yamllint
         args: [--strict]
+
+  - repo: local
+    hooks:
+      - id: validate-patterns
+        name: playbook red-line PATTERNS block compiles and is well-formed
+        language: system
+        entry: python3 scripts/validate-patterns.py
+        files: ^(agentic-security-playbook\.md|scripts/validate-patterns\.py)$
+        pass_filenames: false
+        additional_dependencies: []
+
+      - id: asr-id-consistency
+        name: ASR ids in validation/cases.yml all exist in the playbook
+        language: system
+        entry: python3 scripts/check-asr-ids.py
+        files: ^(agentic-security-playbook\.md|validation/cases\.yml|scripts/check-asr-ids\.py)$
+        pass_filenames: false
