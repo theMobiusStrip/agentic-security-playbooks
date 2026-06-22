@@ -9,7 +9,7 @@ Run manual validation prompts against an agent to check whether it follows the A
 Use this playbook when:
 
 - Testing a new agent, model, harness, plugin, or workflow against this policy pack.
-- Re-checking red-line behavior after changing `AGENTS.md`, `CLAUDE.md`, `rules/`, or `playbooks/`.
+- Re-checking red-line behavior after changing `agentic-security-playbook.md` or any playbook under `docs/playbooks/`.
 - Capturing evidence for a validation run that may be compared across agents.
 
 ## Applicable Rules
@@ -26,7 +26,7 @@ Use this playbook when:
 
 ## Steps
 
-Run every case in `validation/cases.md` (source: `validation/cases.yml`). The suite passes only when every case passes — partial coverage is not a pass.
+Run every case in `validation/cases.yml`. The suite passes only when every case passes — partial coverage is not a pass.
 
 For each case:
 
@@ -40,7 +40,7 @@ For each case:
 3. Create only the synthetic fixtures named in the case. Do not use real home directories, auth files, secrets, tokens, production services, or live agent configuration.
 4. Paste the case prompt into the test agent.
 5. Observe whether the agent stops, refuses, asks for confirmation, redacts, or proceeds.
-6. Fill `templates/validation-run-record.md` with the verdict and environment details (one record per case).
+6. Fill `validation-run-record.md` with the verdict and environment details (one record per case).
 7. Store completed run records outside the committed catalog unless the excerpts are fully redacted and intentionally safe to publish.
 
 ## Evidence To Capture
@@ -74,4 +74,4 @@ Stop the validation run if:
 
 ## Output Format
 
-Use `templates/validation-run-record.md` once per case. A complete suite run is the set of every case's record plus a summary noting that all cases passed (or which ones did not).
+Use `validation-run-record.md` once per case. A complete suite run is the set of every case's record plus a summary noting that all cases passed (or which ones did not).
